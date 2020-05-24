@@ -9,3 +9,4 @@ test fetch
 test conflicit local
 test conflicit remote
 after handling conflicit
+test for clone
