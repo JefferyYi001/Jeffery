@@ -1,0 +1,8 @@
+#!/bin/bash
+params=$@
+i=1
+
+for((i=102 ;i<=104 ;i=$i+1 ));do
+	echo ==========hadoop$i $params==========
+	ssh hadoop$i "source /etc/profile;$params"
+done
