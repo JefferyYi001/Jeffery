@@ -202,7 +202,7 @@ registerWithMaster()
 ![image-20200520205405410](C:\Users\Jeffery\AppData\Roaming\Typora\typora-user-images\image-20200520205405410.png)
 
 ```scala
-1.	start-all.sh脚本，实际是执行java -cp Master和java -cp Worker；
+1.	start-all.sh 脚本，实际是执行 java -cp Master 和 java -cp Worker；
 2.	Master启动时首先创建一个RpcEnv对象，负责管理所有通信逻辑；
 3.	Master通过RpcEnv对象创建一个Endpoint，Master就是一个Endpoint，Worker可以与其进行通信；
 4.	Worker启动时也是创建一个RpcEnv对象；

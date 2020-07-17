@@ -215,7 +215,7 @@ msck repair table 表名
 #### 1.2.4.2 load
 
 ```sql
-load data local inpath '/home/atguigu/hivedatas/t2.data' into table t2 partition(province='guangxi')
+load data local inpath '/home/jeffery/hivedatas/t2.data' into table t2 partition(province='guangxi')
 ```
 
 load 的方式不仅可以帮我们将数据上传到分区目录，还可以自动生成分区的元数据。
@@ -234,6 +234,8 @@ alter table 表名 drop patition(分区字段名=分区字段值),patition(分�
 
 删除分区一定会删除分区内的元数据，如果表是管理表，还会删除分区目录！
 
+
+
 #### 1.2.4.4 多级分区表
 
 ```sql
@@ -243,9 +245,42 @@ create table t3(id int,name string,sex string) partitioned by(province string,ci
 加载数据：
 
 ```sql
- load data local inpath '/home/atguigu/hivedatas/t2.data' into table t3 partition(province='guangxi',city='nanning',area='buzhidao')
+ load data local inpath '/home/jeffery/hivedatas/t2.data' into table t3 partition(province='guangxi',city='nanning',area='buzhidao')
 ```
 
+#### 1.2.4.5 动态分区
+
+想要用动态分区要先做一些设置来修改默认的配置。
+
+```java
+set hive.exec.dynamic.partition=true;(可通过这个语句查看：set hive.exec.dynamic.partition;) 
+set hive.exec.dynamic.partition.mode=nonstrict; 
+SET hive.exec.max.dynamic.partitions=100000;(如果自动分区数大于这个参数，将会报错)
+SET hive.exec.max.dynamic.partitions.pernode=100000;
+```
+
+建立分区表的语法:
+
+```sql
+Drop table table_name; --先删除表 没有则直接建表了
+CREATE TABLE table_name    --创建表
+(col1 string, col2 date, col3 double) 
+partitioned by (datekey date)  --可以多个字段的组合分区 
+ ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' Stored AS TEXTFILE;
+```
+
+插入数据：
+
+```sql
+INSERT INTO TABLE table_Name
+PARTITION (DateKey)
+SELECT col1,col2,col3,DateKey FROM otherTable
+WHERE DATEKEY IN ('2017-02-26','2013-06-12','2013-09-24')
+GROUP BY col1,col2,col3,DateKey  
+DISTRIBUTE BY DateKey
+```
+
+注意：insert into 与 insert overwrite 都可以向hive表中插入数据，但是insert into直接追加到表中数据的尾部，而insert overwrite会重写数据，既先进行删除，再写入。如果存在分区的情况，insert overwrite会只重写当前分区数据。
 
 
 ### 1.2.5 分桶表
@@ -314,7 +349,7 @@ row format delimited fields terminated by '\t';
 ④ 先把数据load到临时表
 
 ```sql
-load data local inpath '/home/atguigu/hivedatas/t4.data' into table stu_buck_tmp;
+load data local inpath '/home/jeffery/hivedatas/t4.data' into table stu_buck_tmp;
 ```
 
 ⑤ 使用insert 语句向分桶表导入数据
@@ -675,7 +710,7 @@ set mapreduce.job.reduces=3
 ② 进行部分排序
 
 ```sql
-insert overwrite local directory '/home/atguigu/sortby' select * from emp sort by deptno;
+insert overwrite local directory '/home/jeffery/sortby' select * from emp sort by deptno;
 ```
 
 注：sort by只是指定排序的字段，无法控制数据按照什么字段进行分区。
@@ -691,7 +726,7 @@ insert overwrite local directory '/home/atguigu/sortby' select * from emp sort b
 ​		操作：按照部门号进行分区，按薪水进行降序排序。
 
 ```sql
-insert overwrite local directory '/home/atguigu/sortby' row format delimited fields terminated by '\t'  select * from emp Distribute by deptno sort by sal desc ;
+insert overwrite local directory '/home/jeffery/sortby' row format delimited fields terminated by '\t'  select * from emp Distribute by deptno sort by sal desc ;
 ```
 
 

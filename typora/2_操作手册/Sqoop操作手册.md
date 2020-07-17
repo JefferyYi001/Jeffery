@@ -94,7 +94,7 @@ INSERT INTO t_emp(NAME,age,deptId,empno) VALUES('韦小宝',18,null,100010);
 | --target-dir           | 导入到 hdfs 的哪个路径                                       |                                                              |
 | --delete-target-dir    | MR程序要求输出目录必须不存在，如果目标目标存在就删除后再导入 |                                                              |
 | --fields-terminated-by | 导入到 Hdfs 上后，每个字段使用什么参数进行分割               |                                                              |
-| --num-mappers          | 要启动几个 MapTask                                           |                                                              |
+| --num-mappers          | 要启动几个 MapTask                                           | 默认 4 个                                                    |
 | --split-by             | 数据集根据哪个字段进行切分，切分后每个  MapTask 负责一部分   |                                                              |
 | --column               | 导入表的哪些列                                               |                                                              |
 | --where                | 指定过滤的 where 语句                                        | where 语句最好使用引号包裹                                   |

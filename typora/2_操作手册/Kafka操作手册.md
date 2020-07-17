@@ -168,11 +168,11 @@ bin/kafka-console-consumer.sh --bootstrap-server hadoop104:9092 --topic hello --
 可以让多个消费者线程分配到一个组中，同一个组中的消费者线程，会共同消费同一个 topic。
 
 ```bash
-bin/kafka-console-consumer.sh --bootstrap-server hadoop104:9092 --topic hello --consumer-property group.id=atguigu --consumer-property client.id=test1
+bin/kafka-console-consumer.sh --bootstrap-server hadoop104:9092 --topic hello --consumer-property group.id=jeffery --consumer-property client.id=test1
 ```
 
 ```bash
-bin/kafka-console-consumer.sh --bootstrap-server hadoop104:9092 --topic hello --consumer-property group.id=atguigu --consumer-property client.id=test2
+bin/kafka-console-consumer.sh --bootstrap-server hadoop104:9092 --topic hello --consumer-property group.id=jeffery --consumer-property client.id=test2
 ```
 
 注：同一组的不同消费者可以运行在不同节点上；消费者 id 可以重复，运行时不报错，分别在不同线程运行。
@@ -186,7 +186,7 @@ bin/kafka-consumer-groups.sh --bootstrap-server hadoop104:9092 --list
 查看消费者组当前状态：
 
 ```bash
-bin/kafka-consumer-groups.sh --bootstrap-server hadoop104:9092 --group atguigu --describe
+bin/kafka-consumer-groups.sh --bootstrap-server hadoop104:9092 --group jeffery --describe
 ```
 
 
@@ -339,7 +339,7 @@ bin/kafka-console-consumer.sh --bootstrap-server hadoop104:9092 --topic test --p
 举例：
 
 ```
-有atguigu消费者组，组内有3个消费者[a,b,c]
+有jeffery消费者组，组内有3个消费者[a,b,c]
 a 订阅了 hello(0,1,2)
 b 订阅了 hello(0,1,2)
 c 订阅了 hello1(0,1,2)
@@ -373,7 +373,7 @@ a比b多分配4个分区。
 举例：
 
 ```
-有atguigu消费者组，组内有3个消费者[a,b,c]
+有jeffery消费者组，组内有3个消费者[a,b,c]
 a 订阅了 hello(0,1,2)
 b 订阅了 hello(0,1,2)
 c 订阅了 hello1(0,1,2)
@@ -387,7 +387,7 @@ b 消费了 hello(1)
 c 消费了 hello1(0,1,2)
 ```
 
-## 5.3 分区原则
+## 5.3 生产者分区原则
 
 producer 将发送的数据封装成一个**ProducerRecord**对象。
 
@@ -482,7 +482,7 @@ public static void main(String[] args) {
         Producer<Integer, String> producer = new KafkaProducer<>(props);
 
         for (int i = 0; i < 10; i++){
-        producer.send(new ProducerRecord<Integer, String>("test1", i, "atguigu"+i));
+        producer.send(new ProducerRecord<Integer, String>("test1", i, "jeffery"+i));
         }
 
         producer.close();
@@ -494,7 +494,7 @@ public static void main(String[] args) {
 ```java
 //异步带回调的发送
 //只需在 producer.send() 方法中传入 Callback() 实例
-            producer.send(new ProducerRecord<Integer, String>("test2", i, "atguigu" + i), new Callback() {
+            producer.send(new ProducerRecord<Integer, String>("test2", i, "jeffery" + i), new Callback() {
               //  一旦发送的消息被server通知了ack，此时会执行onCompletion()
                 // RecordMetadata: 当前record生产到broker上对应的元数据信息
                 // Exception： 如果发送失败，会将异常封装到exception返回
@@ -555,7 +555,7 @@ public class MyPartitioner implements Partitioner {
 ② 在producer中设置
 
 ```java
-props.put(ProducerConfig.PARTITIONER_CLASS_CONFIG,"com.atguigu.kafka.custom.MyPartitioner");
+props.put(ProducerConfig.PARTITIONER_CLASS_CONFIG,"com.jeffery.kafka.custom.MyPartitioner");
 ```
 
 ## 7.4 自定义拦截器
@@ -639,8 +639,8 @@ public class CounterInterceptor implements ProducerInterceptor<Integer,String> {
         ArrayList<String> interCeptors = new ArrayList<>();
 
         // 添加的是全类名，注意顺序，先添加的会先执行
-        interCeptors.add("com.atguigu.kafka.custom.TimeStampInterceptor");
-        interCeptors.add("com.atguigu.kafka.custom.CounterInterceptor");
+        interCeptors.add("com.jeffery.kafka.custom.TimeStampInterceptor");
+        interCeptors.add("com.jeffery.kafka.custom.CounterInterceptor");
          //设置拦截器
         props.put(ProducerConfig.INTERCEPTOR_CLASSES_CONFIG,interCeptors);
 ```

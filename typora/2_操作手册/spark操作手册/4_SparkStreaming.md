@@ -362,7 +362,7 @@ object WindowTest1 {
       .flatMap(_.split(" "))
       .map((_, 1))
       // 写法1：注意 slideDuration 需要参数名传参，否则会引发歧义导致报错
-      //      .reduceByKeyAndWindow(_ + _, Seconds(9), slideDuration = Seconds(6))
+      .reduceByKeyAndWindow(_ + _, Seconds(9), slideDuration = Seconds(6))
       // 写法2：采用了优化处理，将每次不需要计算的中间部分 checkpoint，需要设置 checkpoint。当 windowDuration > slideDuration 时才有意义。
       // 为防止 (a,0) 的情况出现，需要定义 filterFunc = _._2 > 0
       .reduceByKeyAndWindow(_ + _, (now, pre) => now - pre, Seconds(9), filterFunc = _._2 > 0)
@@ -482,7 +482,10 @@ object ForeachRddTest02 {
         Some(seq.sum + opt.getOrElse(0))
       })
     // 创建 SparkSession
-    val spark = SparkSession.builder().config(stc.sparkContext.getConf).getOrCreate()
+    val spark = SparkSession
+      .builder()
+      .config(stc.sparkContext.getConf)
+      .getOrCreate()
     import spark.implicits._
     wordCountStream.foreachRDD(rdd => {
     // 将 RDD 转为 DF

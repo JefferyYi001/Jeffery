@@ -34,12 +34,12 @@
      - 切断血缘关系
 3. RDD 编程主要分为转换算子（transformation）和行动算子（action）两部分。
    - 转换算子
-     - 只要这个算子的返回值是一个`RDD`,那么就一定是转换算子
-     - 都是`lazy`的, 只要碰到一个`action`, 那么从最初的位置开始执行真正的转换
+     - 只要这个算子的返回值是一个`RDD`，那么就一定是转换算子。
+     - 都是`lazy`的, 只要碰到一个`action`，那么从最初的位置开始执行真正的转换。
    - 行动算子
      - 返回值不是`RDD`就一定是行动算子
-     - 用来计算的触发动作.
-     - `job`, 如果碰到一个`action`就会创建一个`job`, 都会从转换的最初开始执行传给转换算子的那些匿名函数.
+     - 用来计算的触发动作
+     - `job`, 如果碰到一个`action`就会创建一个`job`, 都会从转换的最初开始执行传给转换算子的那些匿名函数
 
 
 
@@ -95,16 +95,13 @@ sc.textFile(...)
        }
      }
      ```
-   ```
-     
-     注意：PARTITION 侧重结果，split 侧重过程。
-     
-     注意：没有 collect 直接 foreach，分区顺序不可控。
-   ```
+   
+   注意：PARTITION 侧重结果，split 侧重过程。
+   注意：没有 collect 直接 foreach，分区顺序不可控。
    
 2. `glom`
 
-   把每个分区的数据放入到一个数组中，之后将得到的所有数组构成一个集合。如果有 n 个分区，得到的新的`RDD`中就有n个数组。
+   把每个分区的数据放入到一个数组中，之后将得到的所有数组构成一个集合。如果有 n 个分区，得到的新的`RDD`中就有 n 个数组。
 
 3. `distinct`
 
@@ -165,7 +162,7 @@ sc.textFile(...)
 4. `groupBy`
 
    - spark 集合之间的依赖关系分为宽依赖和窄依赖两种，宽依赖意味着有 shuffle 过程；窄依赖一对一，实现任务解耦。
-   - `groupBy`需要`shuffle`, 因为这个算子会产生宽依赖。而`shuffle`需要借助于磁盘, 所以效率比较低，以后要慎用。
+   - `groupBy`需要`shuffle`，因为这个算子会产生宽依赖。而`shuffle`需要借助于磁盘，所以效率比较低，以后要慎用。
    - 分完组之后, `rdd`是`kv`形式的, 所以需要重新分区，默认的分区器是哈希分区器。
    - 分组必然伴随着分区，除此之外 groupby 和 partitionby 两者没有必然的联系，它们根据不同的业务需求分别从不同的角度来实现各自的功能。
 
@@ -182,9 +179,8 @@ sc.textFile(...)
 6. `coalesce`
 
    ```scala
-   用来改变RDD分区数.
-   coalesce 只能减少分区,不能增加分区. 因为coalesce默认是不shuffle
-   如果启动shuffle, 也可以增加分区.
+   用来改变 RDD 分区数.
+   coalesce 只能减少分区,不能增加分区。因为 coalesce 默认是不 shuffle，如果启动shuffle, 也可以增加分区.
    
    以后, 如果减少分区, 尽量不要shuffle, 只有增加的分区的时候才shuffle
    
@@ -192,15 +188,15 @@ sc.textFile(...)
        如果减少分区就使用 coalesce
        如果是增加分区就是用 repartition
    ```
-
+   
 7. `sortBy`
 
    ```
    sortBy
        整个 RDD 进行的全局排序
-       参数1: 排序指标
-       参数2: 是否升序(默认true)
-       参数3: 排序后新的 RDD 的分区数。默认和排序前的 rdd 的分区数一致
+       参数 1: 排序指标
+       参数 2: 是否升序(默认true)
+       参数 3: 排序后新的 RDD 的分区数。默认和排序前的 rdd 的分区数一致
    ```
 
    ```scala
@@ -302,22 +298,24 @@ sc.textFile(...)
 
 ## 2.4 K-V 形式的 RDD
 
-注意：...ByKey 都会 shuffle。
+注意：... ByKey 都会 shuffle。
 
 1. `partitionBy`
 
    ```scala
    object PartitionBy {
      def main(args: Array[String]): Unit = {
-       val conf: SparkConf = new SparkConf().setAppName("PartitionBy").setMaster("local[2]")
+       val conf: SparkConf = new SparkConf()
+                             .setAppName("PartitionBy")
+                             .setMaster("local[2]")
        val sc: SparkContext = new SparkContext(conf)
-       val list1 = List("hello", "hello", "world", "atguigu", "hello", "world")
+       val list1 = List("hello", "hello", "world", "jeffery", "hello", "world")
    
        // 初始状态下分区数为自定义为 2，分区规则类似于 range 的分区方式，近乎均等地分到 2 个分区
        val rdd1 = sc.parallelize(list1, 2).map((_, 1))
    
-       // 根据 key 的 hashcode % 3 的结果分到 3 个分区, value 不做考虑
-       // 若希望根据 value 的值进行分区, 那么应将 k - v 对调后进行分区, 分区后再对调复原
+       // 根据 key 的 hashcode % 3 的结果分到 3 个分区, value 不做考虑。
+       // 若希望根据 value 的值进行分区, 那么应将 k - v 对调后进行分区, 分区后再对调复原。
        // 若 hashcode % 3 < 0，则 hashcode % 3 + 3 为分区值
        // 没有分到元素的分区为空
        val rdd2 = rdd1.partitionBy(new HashPartitioner(3))
@@ -337,7 +335,6 @@ sc.textFile(...)
      // 传入 key，返回分区号
      def getPartition(key: Any): Int
    }
-   
    ```
 
    - 只有`kv`形式的`RDD`才能使用分区器进行分区。
@@ -360,10 +357,10 @@ sc.textFile(...)
    	多一个 zero
        1. zero 的类型必须与 v 的类型一致
        2. zero 只在分区内聚合(预聚合, map端)的时候参与运算。分区间聚合(最终聚合, reduce端)不参与。
-       3. 对一个 key, zero 最多参数参与 n 次 (n 是分区数)。
+       3. 对一个 key, zero 最多参与 n 次计算 (n 是分区数)。
        4. 若某个分区中不包含该元素，则在该分区内聚合时 zero 值不计入该元素。
-   
    // foldByKey reduceByKey 共同点:他们在分区内聚合和分区间的逻辑是一样.
+   
    aggregateByKey:(次之)
    	1. 分区内聚合和分区间的聚合可以采用不一样的逻辑。
    	2. 分区内聚合时 zero 的类型可以与 v 的类型不一致。
@@ -408,18 +405,21 @@ sc.textFile(...)
    ```scala
       object AggregateByKey {
         def main(args: Array[String]): Unit = {
-          val conf: SparkConf = new SparkConf().setAppName("FoldByKey").setMaster("local[2]")
+          val conf: SparkConf = new SparkConf()
+                                .setAppName("FoldByKey")
+                                .setMaster("local[2]")
           val sc: SparkContext = new SparkContext(conf)
           val rdd1 = sc.parallelize(List(("a", 3), ("a", 2), ("c", 4), ("b", 3), ("c", 6), ("c", 8)), 2)
-          // 分区内: 最大和最小   分区间: 最大的和和最小的和
+          // 分区内: 最大和最小
+          // 分区间: 最大的和和最小的和
           val rdd2 = rdd1.aggregateByKey((Int.MinValue, Int.MaxValue))({
             case ((max, min), ele) => (max.max(ele), min.min(ele))
           }, {
             case ((max1, min1), (max2, min2)) => (max1 + max2, min1 + min2)
           })
           rdd2.collect.foreach(println)
-          // 计算每个key的平均值
-          // 分区内: 求和 与key出现的个数  分区间: 和相加 与 个数相加
+          // 计算每个 key 的平均值
+          // 分区内: 求和与 key 出现的个数  分区间: 和相加 与 个数相加
           println("-----------------------------------------")
           val rdd3 = rdd1.aggregateByKey((0, 0))({
             case ((sum, count), value) => (sum + value, count + 1)
@@ -455,48 +455,71 @@ sc.textFile(...)
         }
    }
    ```
-   
-   
 
-   3. `reduceByKey`和`groupByKey`
-
+3. `reduceByKey`和`groupByKey`
+   
    - 如果是聚合应用使用`reduceByKey`, 因为他有预聚合, 可以提高性能。
-      - 如果分组的目的不是为了聚合, 这个时候就应该使用`groupByKey`。
+   - 如果分组的目的不是为了聚合, 这个时候就应该使用`groupByKey`。
    - 如果分组的目的是为了聚合, 则不要使用``groupByKey``, 因为他没有预聚合。
       - `groupbykey` 最终也用了 `combineByKeyWithClassTag`，只不过没有进行预聚合。
-
-   4. 排序
+   
+4. 排序
    
       ```scala
-      sortBy	这个使用更广泛, 可以用在任意的RDD上, 用的更多些。
-      // sortBy 在底层调用了 sortByKey，将其 value 去序列化后转换作为 key 进行排序。完成排序后再取其 value。
+      sortBy	这个使用更广泛, 可以用在任意的 RDD 上, 用的更多些。
+   // sortBy 在底层调用了 sortByKey，将其 value 去序列化后转换作为 key 进行排序。完成排序后再取其 value。
       Key 这个只能用在 kv 上, 按照 k 进行排序。
+   ```
+
+
+5. `join`
+   
+   其实就是`sql`中的连接
+   
+   - `sql`
+   
+     - 内连接
+   
+       `on a.id=b.id`
+   
+     - 左外
+   
+     - 右外
+   
+     - 全外(`hive`支持, `mysql`不支持)
+   
+   - `spark 的 rdd中`都支持，但只能用于`kv`形式的`RDD`，将 k 相等的连在一起。
+   
+        - 外连接时，不确定的值用 Option 对象进行封装，存在为 Some，否则为 None。
+   
+      ```scala
+   object JoinTest {
+        def main(args: Array[String]): Unit = {
+       val conf: SparkConf = new SparkConf().setAppName("Join").setMaster("local[2]")
+          val sc: SparkContext = new SparkContext(conf)
+          val rdd1 = sc.parallelize(Array((1, "a"), (1, "b"), (2, "c"), (4, "d")))
+          val rdd2 = sc.parallelize(Array((1, "aa"), (3, "bb"), (2, "cc"), (2, "dd")))
+      
+          val rdd3 = rdd1.join(rdd2)
+          val rdd4 = rdd1.leftOuterJoin(rdd2)
+          val rdd5 = rdd2.rightOuterJoin(rdd1)
+          val rdd6 = rdd1.fullOuterJoin(rdd2)
+      
+          rdd3.collect.foreach(println)
+          println("+++++++++++++++")
+          rdd4.collect.foreach(println)
+          println("+++++++++++++++")
+          rdd5.collect.foreach(println)
+          println("+++++++++++++++")
+          rdd6.collect.foreach(println)
+        }
+      }
       ```
 
-   5. `join`
-
-      其实就是`sql`中的连接
-
-      - `sql`
-
-        - 内连接
-
-          `on a.id=b.id`
-
-        - 左外
-
-        - 右外
-
-        - 全外(`hive`支持, `mysql`不支持)
-
-      - `spark 的 rdd中`都支持，但只能用于`kv`形式的`RDD`，将 k 相等的连在一起。
-
-        - 外连接时，不确定的值用 Option 对象进行封装，存在为 Some，否则为 None。
-
-   6. `cogroup`
-
+6. `cogroup`
+   
       先将两个集合执行一次 groupByKey，之后对进行结果进行全外连接，结果类型为：`RDD[(Int, (Iterable[String], Iterable[String]))]`
-
+   
       集合中独有的 key 与另一个集合运算后得到空集。
    
       案例：使用 cogroup 实现 join
@@ -531,7 +554,8 @@ sc.textFile(...)
       }
       
       ```
-   
+
+
    7. `repartitionAndSortWithinPartitions `
    
       按照 k 进行分区并在分区内进行排序，以保证在分区内有序。
@@ -541,11 +565,11 @@ sc.textFile(...)
       对 value 进行 flatMap 操作，之后将结果作为 value 拼接各自的 key。
    
    9. `countByValue`
-
+   
       统计一个 RDD 中各个 value 的出现次数。返回一个 map，map 的 key 是元素的值，value 是出现的次数。
    
    10. 综合练习
-   
+
    ```scala
    object RDDPractice {
        def main(args: Array[String]): Unit = {
@@ -589,14 +613,14 @@ sc.textFile(...)
                    case (pro, adsCountIt: Iterable[(String, Int)]) =>
                        (pro, adsCountIt.toList.sortBy(-_._2).take(3))
                }
-               //            .sortByKey()
+               // .sortByKey()
                .sortBy(_._1.toInt)
            resultRDD.collect.foreach(println)
         sc.stop()
        }
    }
    ```
-   
+
    
 
 ## 2.5 行动算子
@@ -611,11 +635,11 @@ val rdd2 = rdd1.filter(x => {
         })
 ```
 
-`.map .filter`这些算子的调用是在驱动端。DAG 也是在驱动端完成的。
+`.map .filter`这些算子的调用是在驱动端。DAG 也是在驱动端完成构建的。
 
 传入匿名函数的执行都是`lazy`，将来都是在`executor`(进程) 上启动任务 (`task`, 线程) 来执行。
 
-当碰到行动算子的时候, 才开始按照 DAG 来运算。
+当碰到行动算子的时候，才开始按照 DAG 来运算。
 
 同一个`stage`(阶段) 内的`task`是并行运算的。
 
@@ -627,8 +651,8 @@ val rdd2 = rdd1.filter(x => {
 
    `reduceByKey`和`countByKey`
 
-   - `reduceByKey`是一个转换算子, 聚合时把相同 key 的 value 聚合在一起。
-   - `countByKey`是一个行动算子, 仅仅是对 key 进行计数, 和 value 的值没有任何关系。
+   - `reduceByKey`是一个**转换算子**, 聚合时把相同 key 的 value 聚合在一起。
+   - `countByKey`是一个**行动算子**, 仅仅是对 key 进行计数, 和 value 的值没有任何关系。
    - `countByKey`的底层其实就是利用`reduceByKey + collect + toMap` 来计算的。因此当数据量比较大时，官方建议使用 `rdd.mapValues(_ => 1L).reduceByKey(_ + _)` 进行运算。
 
 2. `foreach`
@@ -647,7 +671,7 @@ val rdd2 = rdd1.filter(x => {
    - `rdd1.reduce((x, y) => x + y)` 分区内聚合和分区间的聚合逻辑一样。
    - `fold`的零值类型必须和`RDD`中元素的类型保持一致。且零值在每个分区内聚合的时候各分区内使用一次, 分区间聚合的时候也会使用一次。所以参数运算的次数是: 分区数 + 1。
    - `reduce`与`fold`分区内和分区间的聚合逻辑一样。
-   - 这三个用的不多.了解就行了. 一般都是应转换型的聚合算子.
+   - 这三个用的不多，了解就行， 一般都是应转换型的聚合算子。
 
    小结：
 
@@ -655,7 +679,7 @@ val rdd2 = rdd1.filter(x => {
 
    （2）scala 中 foldLeft 算子的 zero 值类型可以与元素类型不一致；RDD 算子 foldByKey 则要求 zero 值类型与元素类型一致，且每个分区计入一次 zero；行动算子 fold 在 RDD 的基础上，分区间聚合时也计入一次 zero。
 
-   （3）RDD 算子 aggregateByKey、行动算子 aggregate 是为了弥补  zero 值类型与元素类型不一致的场景需求。除此之外，还有更强大的地方：分区内聚合和分区间聚合的执行逻辑可以不同。	RDD 算子 aggregateByKey 在每个分区内计入一次 zero，而行动算子 aggregate 不仅在每个分区内计入一次 zero，在分区间聚合时也会计入一次 zero。
+   （3）RDD 算子 aggregateByKey、行动算子 aggregate 是为了弥补 zero 值类型与元素类型不一致的场景需求。除此之外，还有更强大的地方：分区内聚合和分区间聚合的执行逻辑可以不同。	RDD 算子 aggregateByKey 在每个分区内计入一次 zero，而行动算子 aggregate 不仅在每个分区内计入一次 zero，在分区间聚合时也会计入一次 zero。
 
 ## 2.6 序列化的问题
 
@@ -693,7 +717,7 @@ val rdd2 = rdd1.filter(x => {
    scala> rdd4.toDebugString
    res4: String =
    (2) ShuffledRDD[4] at reduceByKey at <console>:30 []
-   +-(2) MapPartitionsRDD[3] at map at <console>:28 []
+    +-(2) MapPartitionsRDD[3] at map at <console>:28 []
        | MapPartitionsRDD[2] at flatMap at <console>:26 []
        | ./words.txt MapPartitionsRDD[1] at textFile at <console>:24 []
        | ./words.txt HadoopRDD[0] at textFile at <console>:24 []
@@ -722,8 +746,8 @@ val rdd2 = rdd1.filter(x => {
    // 对于 RDD 来说，每个分区都会被一个计算任务处理（Task）处理，分区数决定了并行计算的粒度。
    // 分区数和 task 数是相等的：分区是站数据的存储角度；task 是站的计算的角度。
    // Job 和 Job 之间是串行的
-   // 集群中一个节点(设备)可以运行多个`executor`(进程)
-   // 一个executor可以运行多个`task`, 每个`task`是一个线程
+   // 集群中一个节点 (设备) 可以运行多个`executor`(进程)
+   // 一个 executor 可以运行多个`task`, 每个`task`是一个线程
    // 核心数表示能够同时运行的`task`数量
    // driver 实际上也是一个线程
    // 分区数并不完全等同于并行度，影响并行度的还有 CPU 核心数。并行度为分区数和 CPU 核心数两者的最小值。
@@ -790,12 +814,13 @@ new HashPartioner(2)
    ```scala
    object MyPartitionerDemo {
      def main(args: Array[String]): Unit = {
-       val conf: SparkConf = new SparkConf().setAppName("MyPartitionerDemo").setMaster("local[2]")
+       val conf: SparkConf = new SparkConf()
+                             .setAppName("MyPartitionerDemo")
+                             .setMaster("local[2]")
        val sc: SparkContext = new SparkContext(conf)
        val list1 = List(30, 50, 7, 60, 1, 20, null, null)
        val rdd1 = sc.parallelize(list1, 4).map((_, 1))
        val rdd2 = rdd1.partitionBy(new MyPartitioner(2))
-   
        val rdd3 = rdd2.reduceByKey(new MyPartitioner(2), _ + _)
    
        rdd2.glom().map(_.toList).collect.foreach(println)
@@ -855,7 +880,7 @@ new HashPartioner(2)
    每个分区存一个文件
    ```
 
-   ### 2.10.2 读 json 文件
+   ### 2.10.2 读  json  文件
 
    本质还是读文本文件, 然后使用`json`工具解析出来。
 
@@ -973,8 +998,8 @@ val rdd2 = rdd1.map(x => JSON.parseFull(x))
 
 2. 写:
 
-   1. 如果把所有的数据拉到驱动端, 然后由驱动端统一使用`jdbc`来写入 `mysql`.  若数据量较大, 容易`oom`
-   2. 因此数据计算完毕后直接写到`jdbc`.(重点)
+   1. 如果把所有的数据拉到驱动端, 然后由驱动端统一使用`jdbc`来写入 `mysql`。  若数据量较大则容易`OOM`。
+   2. 因此数据计算完毕后直接写到`jdbc`(重点)。
    3. 为了避免频繁创建和关闭数据库连接，实际执行时以分区为单位，每个分区创建一个数据库连接，分区内数据批量处理，处理后再关闭连接。
 
    ```scala
@@ -1054,7 +1079,7 @@ val rdd2 = rdd1.map(x => JSON.parseFull(x))
 2. 读
 
    ```scala
-   package com.atguigu.spark.core.core05
+   package com.jeffery.spark.core.core05
    
    import org.apache.hadoop.conf.Configuration
    import org.apache.hadoop.hbase.{Cell, CellUtil, HBaseConfiguration}
@@ -1120,7 +1145,7 @@ val rdd2 = rdd1.map(x => JSON.parseFull(x))
 3. 写
 
    ```scala
-   package com.atguigu.spark.core.core05
+   package com.jeffery.spark.core.core05
    
    import org.apache.hadoop.conf.Configuration
    import org.apache.hadoop.hbase.HBaseConfiguration
@@ -1180,11 +1205,13 @@ val rdd2 = rdd1.map(x => JSON.parseFull(x))
 ## 2.13 累加器
 
 ```scala
-// 一次计算出来 元素的和, 个数, 平均值, 最大值, 最小值
+// 一次计算出元素的和, 个数, 平均值, 最大值, 最小值
 // Map("sum" -> .., "avg"-> ...)
 object MyAcc {
   def main(args: Array[String]): Unit = {
-    val conf: SparkConf = new SparkConf().setAppName("Acc2").setMaster("local[2]")
+    val conf: SparkConf = new SparkConf()
+      .setAppName("Acc2")
+      .setMaster("local[2]")
     val sc: SparkContext = new SparkContext(conf)
     val list1 = List(30, 50, 70, 60, 10, 20)
     // 一次计算出来 元素的和, 个数, 平均值, 最大值, 最小值
@@ -1254,12 +1281,12 @@ class MyAcc extends AccumulatorV2[Int, Map[String, Double]]{
 
 1. 累加器解决的是共享变量的什么问题?
    
-   - 共享变量的写的问题(修改)
+   - 共享变量的写的问题(修改)。
    
 2. 共享变量读的问题?
-   - 广播变量解决的是变量读的问题
-   - 应用于大变量读的场景，每个 excutor 只需一个变量即可
-   - 对广播变量, 不要去改, 只能读
+   - 广播变量解决的是变量读的问题。
+   - 应用于大变量读的场景，每个 excutor 只需一个变量即可。
+   - 对广播变量，不要去改，只能读。
    
 3. 使用方法
 
@@ -1273,7 +1300,9 @@ class MyAcc extends AccumulatorV2[Int, Map[String, Double]]{
    object BCTest {
      val arr = Array(30, 50, 10, 100, 300)
      def main(args: Array[String]): Unit = {
-       val conf: SparkConf = new SparkConf().setAppName("BdDemo").setMaster("local[2]")
+       val conf: SparkConf = new SparkConf()
+                             .setAppName("BdDemo")
+                             .setMaster("local[2]")
        val sc: SparkContext = new SparkContext(conf)
    
        val list1 = List(30, 50, 70, 60, 10, 20)
@@ -1285,9 +1314,9 @@ class MyAcc extends AccumulatorV2[Int, Map[String, Double]]{
    
        sc.stop()
      }
-   }
+}
    ```
-
+   
    
 
 ## 2.15 分区策略
@@ -1363,13 +1392,13 @@ long blockSize = file.getBlockSize();  // 本地文件是: 32M
 // computeSplitSize(Math.max(minSize,Math.min(maxSize,blocksize)))
 long splitSize = computeSplitSize(goalSize, minSize, blockSize);
 
-// 待且的长度
+// 待切的长度
 long bytesRemaining = length;
 ```
 
 总结: 
 
-1. 文件的尺寸和总大小的一半的 1.1 倍(或者32M或者128M)做比较。
+1. 文件的尺寸和总大小的一半的 1.1 倍(或者 32M 或者 128M)做比较。
 2. 如果大于则切；否则不切。
 
 ## 2.16 知识点补充
@@ -1390,6 +1419,6 @@ val result = f.format(numerator.toDouble / denominator)
 2. 分区器是对 key 进行分区计算的。
 3. groupByKey 后的数据结构为 key -> Iterable 构成的RDD。
 4. groupBy(Key) 后的数据结构也为 key -> Iterable 构成的RDD。
-5. mapPartitions 是对每个分区内的数据 Iterator 进行操作，执行的结果依然是 Iterator。但是 Iterator 的元素泛型和结构、数量是可以改变的（分别由 foreach、map、filter 实现）。
+5. mapPartitions 是对每个分区内的数据 Iterator 进行操作，执行的结果依然是 Iterator 。但是 Iterator 的元素泛型和结构、数量是可以改变的（分别由 foreach、map、filter 实现）。
 ```
 

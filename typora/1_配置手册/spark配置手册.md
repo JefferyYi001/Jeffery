@@ -53,7 +53,7 @@ bin/spark-submit \
 
 ## 1.4 Standalone 模式
 
-不同于 hadoop 的 standalone，spark 的 standalone 是集群模式, 是真正的分布式。之所以称之为 standalone，是因为搭建集群时只有`spark`就可以了, 不需要其他任何的框架。
+不同于 hadoop 的 standalone，spark 的 standalone 是集群模式，是真正的分布式。之所以称之为 standalone，是因为搭建集群时只有`spark`就可以了, 不需要其他任何的框架。
 
 1. 配置 spark 集群配置环境变量 spark-env.sh
 
@@ -329,7 +329,7 @@ object Hello {
 ```scala
 bin/spark-submit \
 --master yarn \
---class com.atguigu.spark.core.Hello \
+--class com.jeffery.spark.core.Hello \
 --deploy-mode client \
 ./PrimeTest-1.0-SNAPSHOT.jar \
 /input
@@ -626,7 +626,7 @@ sc.textFile(...)
      def main(args: Array[String]): Unit = {
        val conf: SparkConf = new SparkConf().setAppName("PartitionBy").setMaster("local[2]")
        val sc: SparkContext = new SparkContext(conf)
-       val list1 = List("hello", "hello", "world", "atguigu", "hello", "world")
+       val list1 = List("hello", "hello", "world", "jeffery", "hello", "world")
    
        // 初始状态下分区数为自定义为 2，分区规则类似于 range 的分区方式，近乎均等地分到 2 个分区
        val rdd1 = sc.parallelize(list1, 2).map((_, 1))
@@ -1368,7 +1368,7 @@ val rdd2 = rdd1.map(x => JSON.parseFull(x))
 2. 读
 
    ```scala
-   package com.atguigu.spark.core.core05
+   package com.jeffery.spark.core.core05
    
    import org.apache.hadoop.conf.Configuration
    import org.apache.hadoop.hbase.{Cell, CellUtil, HBaseConfiguration}
@@ -1434,7 +1434,7 @@ val rdd2 = rdd1.map(x => JSON.parseFull(x))
 3. 写
 
    ```scala
-   package com.atguigu.spark.core.core05
+   package com.jeffery.spark.core.core05
    
    import org.apache.hadoop.conf.Configuration
    import org.apache.hadoop.hbase.HBaseConfiguration

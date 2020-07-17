@@ -35,7 +35,7 @@ row format delimited fields terminated by "\t";
 加载数据：
 
 ```
-load data local inpath '/home/atguigu/hivedatas/test1' into table emp_sex;
+load data local inpath '/home/jeffery/hivedatas/test1' into table emp_sex;
 ```
 
 ### 1.2 思路1

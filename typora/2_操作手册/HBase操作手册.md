@@ -173,9 +173,11 @@ stop-hbase.sh
 
 ## 2.1 hbase 核心概念
 
+![image-20200704164831317](C:\Users\Jeffery\AppData\Roaming\Typora\typora-user-images\image-20200704164831317.png)
+
 ### 2.1.1 namespace（库）
 
-​		默认有 default、hbaes 两个名称空间。
+​		默认有 default、hbase 两个名称空间。
 
 ​		default 库，用来作为用户的默认库。
 
@@ -217,13 +219,13 @@ stop-hbase.sh
 
 ### 2.1.5 column qualifier：列名
 
-​		列名在插入数据时产生。
+​		列名可以在插入数据时产生。
 
 ​		列名，rowkey，列值，时间戳，都存储在列族目录下的文件中。
 
 ​		数据是以文件的形式存放在列族的目录下：**库目录/ 表目录/ 区域目录/ 列族目录/ 列名文件**
 
-一个列族目录对应一个 store 对象；一个列名文件对应一个 storefile 对象；一个 store 中可以有多个 storefile 对象。 store 最终以 HFile 的格式存储在 HDFS 上。
+一个列族目录对应一个 Sore 对象；一个列名文件对应一个 StoreFile 对象；一个 Store 中可以有多个 StoreFile 对象。 StoreFile 最终以 HFile 的格式存储在 HDFS 上。
 
 ## 2.2 同步集群时间
 
@@ -269,6 +271,7 @@ describe_namespace 'hbase'
 
 ```sql
 create_namespace 'ns1'[, {'PROPERTY_NAME'=>'PROPERTY_VALUE'}]
+-- [] 中的内容可以省略。
 ```
 
 修改库属性：
@@ -386,13 +389,16 @@ scan 'ns1:t1', {RAW => true, VERSIONS => 10}
 
 ## 2.7 hbase 的写流程
 
-发送给 Put 请求：put '表名','rowkey','列族名:列名',value。
+发送给 Put 请求：
 
 ```sql
+-- 格式
+put '表名','rowkey','列族名:列名',value
+-- 示例
 put 'ns1:t1','r6','cf1:name','tom'
 ```
 
-​		在 hbase 的服务端，有两种类型的请求：一种例如建表、删表、分配 region 到 regionserver 这些请求，由 Master(集群的管理者)负责；另一种例如数据的增删改查，由 regionserver 负责处理（Zookeeper 也会分担一部分）。
+​		在 hbase 的服务端，有两种类型的请求：一种例如建表、删表、分配 region 到 regionserver 这些请求，由 Master(集群的管理者) 负责；另一种例如数据的增删改查，由 regionserver 负责处理（Zookeeper 也会分担一部分）。
 
 ![image-20200320181706018](C:\Users\Jeffery\AppData\Roaming\Typora\typora-user-images\image-20200320181706018.png)
 
@@ -410,9 +416,9 @@ put 'ns1:t1','r6','cf1:name','tom'
 
 ④ 根据 rowkey 所在的 region，找到 regionserver，发送 put 请求。
 
-⑤ regionserver 先将 put 请求记录到 WAL 日志文件中，再写入指定 store 的 memstore 中。（每个 store 有一个 memstore，但会存储多个 StoreFile ）
+⑤ regionserver 先将 put 请求记录到 WAL 日志文件中，再写入指定 store 的 MemStore 中。（每个 Store 有一个 MemStore，但会存储多个 StoreFile ）
 
-⑥ 一旦写入 memstore 完成，就通知客户端已经写完。
+⑥ 一旦写入 MemStore 完成，就通知客户端已经写完。
 
 ## 2.8 hbase 的写流程(源码解析)
 
@@ -555,9 +561,9 @@ try {
 
 ⑤ regionserver 在处理 get 请求时，根据所查询的 store，初始化两种 scanner：
 
-​		2. memstoreScanner —— 负责扫描 store 的 memstore。
+​		memstoreScanner —— 负责扫描 store 的 memstore。
 
-​		3. StoreFileScanner —— 负责扫描列族下的 storefile。
+​		StoreFileScanner —— 负责扫描列族下的所有的 storefile。
 
 ​		每个 store 都会初始化一个 memstoreScanner，初始化多个 StoreFileScanner。
 

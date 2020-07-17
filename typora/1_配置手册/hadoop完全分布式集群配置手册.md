@@ -167,7 +167,7 @@ sudo service sshd restart
 
 ## 1.3 配置群发脚本和群控脚本
 
-在/home/atguigu目录下创建bin目录，并在bin目录下创建xsync文件，文件内容如下：
+在/home/jeffery目录下创建bin目录，并在bin目录下创建xsync文件，文件内容如下：
 
 ```bash
 #!/bin/bash
@@ -264,7 +264,7 @@ xsync /etc/profile
 （2）JDK 和 Hadoop 发送后需要在接收端机器修改其所有者。
 
 ```bash
-sudo chown atguigu:atguigu -R /opt/module/
+sudo chown jeffery:jeffery -R /opt/module/
 ```
 
 检验是否安装成功

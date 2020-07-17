@@ -201,7 +201,7 @@ xsync zoo.cfg
 	<!-- 使用隔离机制时需要ssh无秘钥登录-->
 	<property>
 		<name>dfs.ha.fencing.ssh.private-key-files</name>
-		<value>/home/atguigu/.ssh/id_rsa</value>
+		<value>/home/jeffery/.ssh/id_rsa</value>
 	</property>
 
 	<!-- 声明journalnode服务器存储目录-->

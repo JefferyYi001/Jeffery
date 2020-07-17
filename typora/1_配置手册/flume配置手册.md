@@ -267,7 +267,7 @@ a1.channels = c1
 
 # 配置source
 a1.sources.r1.type = exec
-a1.sources.r1.command=tail -f /tmp/atguigu/hive.log
+a1.sources.r1.command=tail -f /tmp/jeffery/hive.log
 
 
 # 配置sink
@@ -345,7 +345,7 @@ a1.channels = c1
 
 # 配置source
 a1.sources.r1.type = spooldir
-a1.sources.r1.spoolDir=/home/atguigu/flume
+a1.sources.r1.spoolDir=/home/jeffery/flume
 
 # 配置sink
 a1.sinks.k1.type = hdfs
@@ -391,7 +391,7 @@ bin/flume-ng agent -c conf/ -n a1 -f flumeagents/execsource-hdfssink.conf -Dflum
 
 ### 5.2.1 TailDirSource
 
-​		TailDirSource 以接近实时的速度监控文件中写入的新行，并且将每个文件 tail 的位置记录在一个 JSON 的文件中；即便 agent 挂掉，重启后，source 依然可以从上次记录的位置继续执行 tail 操作。用户可以通过修改Position文件的参数，来改变source继续读取的位置；如果 postion 文件丢失了，那么 source 会重新从每个文件的第一行开始读取(重复读)。
+​		TailDirSource 以接近实时的速度监控文件中写入的新行，并且将每个文件 tail 的位置记录在一个 JSON 的文件中；即便 agent 挂掉，重启后，source 依然可以从上次记录的位置继续执行 tail 操作。用户可以通过修改 Position 文件的参数，来改变source继续读取的位置；如果 postion 文件丢失了，那么 source 会重新从每个文件的第一行开始读取(重复读)。
 
 必须配置：
 
@@ -416,9 +416,9 @@ a1.channels = c1
 # 配置source
 a1.sources.r1.type = TAILDIR
 a1.sources.r1.filegroups = f1 f2
-a1.sources.r1.filegroups.f1 = /home/atguigu/a.txt
-a1.sources.r1.filegroups.f2 = /home/atguigu/b.txt
-a1.sources.r1.positionFile=/home/atguigu/taildir_position.json
+a1.sources.r1.filegroups.f1 = /home/jeffery/a.txt
+a1.sources.r1.filegroups.f2 = /home/jeffery/b.txt
+a1.sources.r1.positionFile=/home/jeffery/taildir_position.json
 # 配置sink
 a1.sinks.k1.type = logger
 
@@ -499,7 +499,7 @@ a1.sources.r1.port = 1234
 
 # 配置sink
 a1.sinks.k1.type = file_roll
-a1.sinks.k1.sink.directory=/home/atguigu/flume
+a1.sinks.k1.sink.directory=/home/jeffery/flume
 a1.sinks.k1.sink.rollInterval=600
 
 # 配置channel
@@ -577,7 +577,7 @@ a1.channels = c1 c2
 #a1.sources.r1.selector.type = replicating
 # 配置source
 a1.sources.r1.type = exec
-a1.sources.r1.command=tail -f /tmp/atguigu/hive.log
+a1.sources.r1.command=tail -f /tmp/jeffery/hive.log
 
 # 配置sink
 a1.sinks.k1.type = avro
@@ -960,7 +960,7 @@ a1.channels = c1
 
 # 配置source
 a1.sources.r1.type = exec
-a1.sources.r1.command=tail -f /home/atguigu/hello.txt
+a1.sources.r1.command=tail -f /home/jeffery/hello.txt
 
 #配置拦截器
 a1.sources.r1.interceptors = i1
@@ -1187,8 +1187,8 @@ a1.sinks = k1
 a1.channels = c1
 
 # 自定义source，type必须是类的全类名
-a1.sources.r1.type = com.atguigu.flume.custom.MySource
-a1.sources.r1.name = atguigu:
+a1.sources.r1.type = com.jeffery.flume.custom.MySource
+a1.sources.r1.name = jeffery:
 
 # 配置sink
 a1.sinks.k1.type = logger
@@ -1222,7 +1222,7 @@ public class MyInterceptor implements Interceptor
 
 需实现 intercept() 方法，获取 event 并进行逻辑处理，之后将处理后的 event return。需实现处理单个 event 的 intercept() 方法和处理批量 event 的 intercept() 方法。常规操作是实现处理单个 event 的 intercept() 方法，在处理批量 event 的 intercept() 方法中调用前者即可。
 
-另外，拦截器初始化时会调用一次 initialize() 方法，关闭时会调用一次 close() 方法。需要特别说明的是，还需要定义静态内部类 Builder，通过成员方法 build() 返回一个 Interceptor 实例，也可以通过 configure(Context context) 方法从 context 中获取配置文件属性。
+另外，拦截器初始化时会调用一次 initialize() 方法，关闭时会调用一次 close() 方法。需要特别说明的是，还需要定义静态内部类 Builder，通过成员方法 build() 返回一个 Interceptor 实例，还可以通过 configure(Context context) 方法从 context 中获取配置文件属性。
 
 ## 10.3 Sink
 
@@ -1246,17 +1246,17 @@ a1.sinks = k1
 a1.channels = c1
 
 # 自定义source，type必须是类的全类名
-a1.sources.r1.type = com.atguigu.flume.custom.MySource
-a1.sources.r1.name = atguigu:
+a1.sources.r1.type = com.jeffery.flume.custom.MySource
+a1.sources.r1.name = jeffery:
 
 #为source添加拦截器
 a1.sources.r1.interceptors = i1
 #type必须写Bulider的全类名
-a1.sources.r1.interceptors.i1.type = com.atguigu.flume.custom.MyInterceptor$Builder
+a1.sources.r1.interceptors.i1.type = com.jeffery.flume.custom.MyInterceptor$Builder
 
 # 配置sink
-a1.sinks.k1.type = com.atguigu.flume.custom.MySink
-a1.sinks.k1.prefix = ***atguigu:
+a1.sinks.k1.type = com.jeffery.flume.custom.MySink
+a1.sinks.k1.prefix = ***jeffery:
 a1.sinks.k1.suffix = :go!
 
 # 配置channel

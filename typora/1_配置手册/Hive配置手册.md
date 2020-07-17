@@ -228,7 +228,7 @@ Beeline 是一个支持JDBC连接的客户端工具。
 !connect 'jdbc:hive2://hadoop103:10000'
 ```
 
-之后回车，输入用户名atguigu（涉及HDFS权限问题，需与HDFS权限用户一致），密码随意。
+之后回车，输入用户名jeffery（涉及HDFS权限问题，需与HDFS权限用户一致），密码随意。
 
 断开连接
 
@@ -277,7 +277,7 @@ public class HiveJdbcTest {
         //Class.forName("org.apache.hive.jdbc.HiveDriver");
 
         //创建连接  url,driverClass,username,password
-        Connection connection = DriverManager.getConnection("jdbc:hive2://hadoop103:10000", "atguigu", "");
+        Connection connection = DriverManager.getConnection("jdbc:hive2://hadoop103:10000", "jeffery", "");
 
         //准备sql
         String sql="select * from person";

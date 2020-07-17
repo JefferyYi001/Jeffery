@@ -1025,13 +1025,13 @@ class User1{
 
    ```java
    // 反编译后的代码
-   public class com.atguigu.scala1128.day04.obj.User2 {
+   public class com.jeffery.scala1128.day04.obj.User2 {
      private java.lang.String name;	// var 为 private 属性
      private final int age;	// val 为 private final 属性
      public java.lang.String name();   // getter
      public void name_$eq(java.lang.String);  // setter
      public int age();		// val 只有 getter，没有setter
-     public com.atguigu.scala1128.day04.obj.User2(java.lang.String, int);//构造器
+     public com.jeffery.scala1128.day04.obj.User2(java.lang.String, int);//构造器
    }
    ```
 
@@ -1133,16 +1133,16 @@ class User2(@BeanProperty var name: String, @BeanProperty val age: Int, @BeanPro
 1. 支持和`java`一样的声明方式（基本这种使用）
 
    ```scala
-   package com.atguigu.scala1128.day04.pack
+   package com.jeffery.scala1128.day04.pack
    ```
 
 2. 支持多个`package`语句(很少碰到)
 
    ```scala
-   package com.atguigu.scala1128.day04.pack
+   package com.jeffery.scala1128.day04.pack
    package a.b
    // 等同于
-   package com.atguigu.scala1128.day04.pack.a.b
+   package com.jeffery.scala1128.day04.pack.a.b
    ```
 
 3. 包语句(很少碰到)
@@ -1217,7 +1217,7 @@ class User2(@BeanProperty var name: String, @BeanProperty val age: Int, @BeanPro
 `java`中一般使用工具类，在工具类中写静态方法。因为`java`中所有的方法都需要依附于类或者对象。`scala`中为了解决这个问题, 提供了一个**包对象**。在这个包内使用包对内的方法的时候，直接调用即可。
 
 ```scala
-package com.atguigu.scala1128.day04
+package com.jeffery.scala1128.day04
 
 package object pack {
     def foo1() = {
@@ -1229,7 +1229,7 @@ package object pack {
 }
 ```
 
-之后在`com.atguigu.scala1128.day04.pack`包下所有的类中都可以直接调用这些方法；但在子包中调用时则需要导入包对象。
+之后在`com.jeffery.scala1128.day04.pack`包下所有的类中都可以直接调用这些方法；但在子包中调用时则需要导入包对象。
 
 ### 6.3.4 默认导入
 
@@ -1917,7 +1917,7 @@ object ImplicitDemo2 {
         // 读取文本文件中的内容  java: IO
         implicit def file2RichFile(file: File) = new RichFile(file)
         
-        val content = new File("C:\\Users\\lzc\\Desktop\\class_code\\2019_11_28\\01_scala\\scala1128\\src\\main\\scala\\com\\atguigu\\scala1128\\day06\\implicitdemo\\ImplicitDemo2.scala").readContent
+        val content = new File("C:\\Users\\lzc\\Desktop\\class_code\\2019_11_28\\01_scala\\scala1128\\src\\main\\scala\\com\\jeffery\\scala1128\\day06\\implicitdemo\\ImplicitDemo2.scala").readContent
         println(content)
     }
 }
@@ -2539,16 +2539,16 @@ object SubCollections {
    > 2. `filter` 一进0出或1出
    > 3. `flatMap` 一进多 (0, 1 , >1) 出
 
-7. WordCount
+7. `WordCount`
 
    （1）java 式写法：核心逻辑是使用 foreach 操作 List 集合中的每一个元素。
 
    ```scala
-   val list = List("hello", "world", "hello", "atguigu", "hello", "atguigu")
+   val list = List("hello", "world", "hello", "jeffery", "hello", "jeffery")
    // 统计一下每个单词出现的次数  wordCount
    /*
            分析:
-               Map(hello->3, world->1, atguigu->2)
+               Map(hello->3, world->1, jeffery->2)
             */
    var result = Map[String, Int]()
    list.foreach(x => {
@@ -2561,7 +2561,7 @@ object SubCollections {
    （2）scala 式写法
 
    ```scala
-   val list = List("hello", "world", "hello", "atguigu", "hello", "atguigu")
+   val list = List("hello", "world", "hello", "jeffery", "hello", "jeffery")
    // 如果匿名函数式原封不动的返回, 则不能化简
    val wordCount = list
        .groupBy(x => x)

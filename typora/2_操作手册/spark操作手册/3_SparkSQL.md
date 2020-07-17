@@ -1,6 +1,6 @@
 # 第三章 spark-SQL
 
-`MapReduce` -> `hive`  为了解决`mr`程序编程困难.
+`MapReduce` -> `hive`  为了解决`mr`程序编程困难
 `spark-core` -> `spark-sql` 为了解决`rdd`编程困难
 
 ## 3.1 spark-core 和 spark-SQL 的对比
@@ -249,7 +249,7 @@ case class People(name: String, salary: Long)
   import org.apache.spark.sql.types.{DataType, DoubleType, LongType, StringType, StructField, StructType}
   
   /**
-   * @time 2020/5/14 - 14:25
+   * @time 2020/01/14 - 14:25
    * @Version 1.0
    * @Author Jeffery Yi
    */
@@ -275,7 +275,7 @@ case class People(name: String, salary: Long)
   }
   
   class MyAvg2 extends UserDefinedAggregateFunction {
-      // 输入参数，可以写多个
+  // 输入参数，可以写多个
     override def inputSchema: StructType = StructType(StructField("ele", DoubleType) :: Nil)
   
     override def bufferSchema: StructType = StructType(StructField("sum", DoubleType) :: StructField("count", LongType) :: Nil)
@@ -557,7 +557,7 @@ bin/beeline
 ```scala
 object HiveTest {
   def main(args: Array[String]): Unit = {
-    System.setProperty("HADOOP_USER_NAME", "atguigu")
+    System.setProperty("HADOOP_USER_NAME", "jeffery")
     val spark = SparkSession.builder()
       .master("local[*]")
       .appName("HiveTest")
@@ -577,7 +577,7 @@ object HiveTest {
 ```scala
 object HiveWrite {
   def main(args: Array[String]): Unit = {
-    System.setProperty("HADOOP_USER_NAME", "atguigu")
+    System.setProperty("HADOOP_USER_NAME", "jeffery")
     val spark = SparkSession.builder()
       .master("local[*]")
       .appName("HiveWrite")
@@ -618,7 +618,7 @@ object HiveWrite {
 ```scala
 object SQLApp {
   def main(args: Array[String]): Unit = {
-    System.setProperty("HADOOP_USER_NAME", "atguigu")
+    System.setProperty("HADOOP_USER_NAME", "jeffery")
     val spark = SparkSession.builder()
       .master("local[*]")
       .appName("SQLApp")
